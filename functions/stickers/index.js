@@ -3,22 +3,35 @@ import "./styles.css";
 
 export const handler = ({ inputs, mechanic }) => {
   const {
-    width, height, textSizeAjust,
+    width, height, textSizeAjust, description,
     tagline,
     colorOne, colorTwo, textColor, image, filterOpacity
   } = inputs;
 
-  // circle
+  // min to determine the size of the circle
   const size = Math.min(width, height)
   const circleRadius = size/2;
-  const circleRadiusRotate = Math.random()*360
-  const lines = tagline.split(" ");
-  const maxLength = Math.max(...(lines.map(el => el.length)));
-  const fontSize = textSizeAjust + (100 - Math.max(0,(lines.length - 4))*5 - Math.max(0,maxLength-2)*2.5)*size/850
-  const lineHeight = fontSize
-  const firstLine = size / 2 - lineHeight * ((lines.length - 2) / 2);
+  const circleRadiusRotate = useRef(Math.random() * 360).current;
 
-  // the text too long
+  const raw = tagline.split(" ");
+  let holder = []; // Output
+  for (var i = 0, j = raw.length -1 ; i <= j; i++) { // Iterate all but last (last can never be glued to non-existing next)
+    var curr = raw[i]; // This piece
+    var next = raw[i+1]
+    if(next){
+      if (curr.length + next.length < 7) { // If its length is smaller than 3
+      curr += ' ' + raw[++i]; // ... glue with next and skip next (increment i)
+    }
+  }
+    holder.push(curr); // Add to output
+  }
+  const lines = [...holder]
+
+  // determine the loggest word of the setence to resize the font
+  const maxLength = Math.max(...(lines.map(el => el.length)));
+  const fontSize = (textSizeAjust + 100 - Math.max(0,(lines.length - 4))*5 - Math.max(0,maxLength-2)*2.5)*size/850
+  const lineHeight = fontSize
+  const firstLine = height / 2 - size/20 - lineHeight * ((lines.length - 2) / 2);
   const [href, setHref] = useState("");
 
   useEffect(() => {
@@ -51,48 +64,41 @@ export const handler = ({ inputs, mechanic }) => {
 
 
   return (
+
     <svg width={width} height={height}>
 
-      {/* The mechanic mini-logo */}
-
-
       <defs>
+        {/* mask to crop the image into a half circle */}
         <mask id="image-mask">
-        <g
-        transform={`translate(${width/2} 0) `}
-        >
-        <path
-        d={`M ${-circleRadius} 0
-        A ${circleRadius} ${circleRadius}, 0, 0, 0, ${circleRadius} 0 Z`} fill="white"
-        />
+        <g transform={`translate(${width/2} ${height/2}) `} >
+        <path d={`M ${-circleRadius} 0 A ${circleRadius} ${circleRadius}, 0, 0, 0, ${circleRadius} 0 Z`} fill="white"/>
         </g>
         </mask>
-
       </defs>
 
-      <g
-        transform={`translate(${width/2} ${height/2}) rotate(${circleRadiusRotate})`}
-      >
+        {/* the other half of the circle */}
+      <g transform={`translate(${width/2} ${height/2}) rotate(${circleRadiusRotate})`} >
         <path
           d={`M ${circleRadius} 0
           A ${circleRadius} ${circleRadius}, 0, 0, 0, ${-circleRadius} 0 Z`}
-          fill={colorOne}
-        />
+          fill={colorOne} />
       </g>
 
-      <g
-        transform={`translate(${width/2} ${height/2}) rotate(${circleRadiusRotate})`}
-      >
-      <image width="100%" height="100%" transform={`translate(${-circleRadius} 0)`}
+      <g transform={`translate(${width/2} ${height/2}) rotate(${circleRadiusRotate})`} >
+
+        {/* the image that will be cropped */}
+      <image width="100%" height="100%" transform={`translate(${-width/2} ${-height/2})`}
           preserveAspectRatio="xMidYMid slice"
           href={href} mask="url(#image-mask)"/>
-      <path
-            d={`M ${-circleRadius} 0
+
+        {/* the filter half circle with adjustable opacity */}
+      <path d={`M ${-circleRadius} 0
          A ${circleRadius} ${circleRadius}, 0, 0, 0, ${circleRadius} 0 Z`}
-            fill={colorTwo} style={{mixBlendMode: "multiply"}} opacity={filterOpacity/100}/>
+         fill={colorTwo} style={{mixBlendMode: "multiply"}} opacity={filterOpacity/100}/>
       </g>
 
 
+        {/* using map to print all the words */}
       {lines.map((line, index) => {
         return (
           <text
@@ -100,6 +106,7 @@ export const handler = ({ inputs, mechanic }) => {
             x={width / 2}
             y={firstLine + index * lineHeight}
             textAnchor="middle"
+            letterSpacing={-fontSize*0.05}
             fill={textColor}
             fontWeight="bold"
             fontFamily="Object Sans"
@@ -110,16 +117,17 @@ export const handler = ({ inputs, mechanic }) => {
         );
       })}
 
+        {/* the description */}
         <text
             x={width / 2}
-            y={height*0.9}
+            y={height/ 2 + size/2 - size*0.1}
             textAnchor="middle"
             fill={textColor}
             fontWeight="regular"
             fontFamily="Object Sans"
             fontSize={30*size/850}
           >
-            mechanic.design
+            {description}
         </text>
     </svg>
   );
@@ -137,6 +145,10 @@ export const inputs = {
   tagline: {
     type: "text",
     default: "mechanic this sticker",
+  },
+  description: {
+    type: "text",
+    default: "mechanic.design",
   },
   textSizeAjust: {
     type: "number",
@@ -177,5 +189,4 @@ export const inputs = {
 
 export const settings = {
   engine: require("@mechanic-design/engine-react"),
-  optimize: false,
 };
