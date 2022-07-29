@@ -119,7 +119,7 @@ export const handler = ({
       sketch.textFont('IBM Plex Mono Light');
       sketch.textSize(lineHeight / 2.5);
       sketch.noStroke()
-      sketch.fill(sketch.hue(backgroundColor)+180, 20, 100)
+      sketch.fill(color1)
       sketch.text("MECHANIC.DESIGN", border / 100 * width, height - lineHeight / 2-border);
 
     }
