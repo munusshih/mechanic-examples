@@ -100,10 +100,10 @@ export const handler = ({
             // 				circles
             sketch.fill(color1);
             sketch.noStroke()
-            sketch.arc(x + circleSize / 2 + 1.5 * width / 850, y - circleSize / 2 + 2 * width / 850,
+            sketch.arc(x + circleSize / 2 + 1.5 * (width+height) / 1700, y - circleSize / 2 + 2 * (width+height) / 1700,
               circleSize, circleSize, 0 + sketch.frameCount / 30 + i * 10, sketch.PI + sketch.frameCount / 30 + i * 10);
             sketch.fill(color2);
-            sketch.arc(x + circleSize / 2 + 1.5 * width / 850, y - circleSize / 2 + 2 * width / 850,
+            sketch.arc(x + circleSize / 2 + 1.5 * (width+height) / 1700, y - circleSize / 2 + 2 * (width+height) / 1700,
               circleSize, circleSize, sketch.PI + sketch.frameCount / 30 + i * 10, sketch.PI * 2 + sketch.frameCount / 30 + i * 10);
           }
 
@@ -276,15 +276,19 @@ export const inputs = {
 };
 
 export const presets = {
-  instagramStory: {
+  "Instagram Story": {
     width: 1080,
     height: 1920,
   },
-  poster: {
+  "Instagram Post": {
+    width: 1080,
+    height: 1080,
+  },
+  "Poster": {
     width: 812,
     height: 1148,
   },
-  FBbanner: {
+  "FB Banner": {
     width: 1640,
     height: 624,
   },
