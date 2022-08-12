@@ -18,7 +18,9 @@ export const handler = ({
     shapes,
     sizes,
     numOfShapes,
-    mode
+    mode,
+    backgroundRotation,
+    textShow
   } =
   inputs;
 
@@ -40,7 +42,7 @@ export const handler = ({
 
   const raw = tagline.split(" ");
   let holder = []
-  const maxText = parseInt(mapRange(height/width, 1.3, 0.5, 12, 20))
+  const maxText = parseInt(mapRange(height / width, 1.3, 0.5, 12, 20))
 
   for (var i = 0, j = raw.length - 1; i <= j; i++) { // Iterate all but last (last can never be glued to non-existing next)
     let curr = raw[i]; // This piece
@@ -57,27 +59,28 @@ export const handler = ({
   const maxLine = Math.floor((height / (90) * width / 850))
   const fontSize = (150 - Math.max(0, (lines.length - maxLine)) * 7 - Math.max(0, maxLength) * 5) * width / 850
 
-  const bgHeight = Math.random()*height
-  const rotateBg = Math.random()*40
+  const bgHeight = Math.random() * height
+  const rotateBg = Math.random() * 40
 
   const sizer = Math.min(width, height)
-  const smallSizes = [sizer/10, sizer/9, sizer/8, sizer/7];
-  const mediumSizes = [sizer/7, sizer/6, sizer/5];
-  const bigSizes = [sizer/4, sizer/3, sizer/3, sizer/2];
-  const mixSizes = [sizer/10, sizer/8, sizer/7, sizer/6, sizer/5, sizer/2];
+  const smallSizes = [sizer / 10, sizer / 9, sizer / 8, sizer / 7];
+  const mediumSizes = [sizer / 7, sizer / 6, sizer / 5];
+  const bigSizes = [sizer / 4, sizer / 3, sizer / 3, sizer / 2];
+  const mixSizes = [sizer / 10, sizer / 8, sizer / 7, sizer / 6, sizer / 5, sizer / 2];
 
   const borderThickness = 10;
-  const firstLine = height/2 - Math.floor(lines.length/2)*fontSize;
+  const firstLine = height / 2 - Math.floor(lines.length / 2) * fontSize;
 
   sketch.setup = () => {
     // 	create a p5 canvas & default settings
     canvas = sketch.createCanvas(width, height);
     engine = Engine.create();
 
-    if(mode=='fly'){
-    engine.world.gravity.y = -0.1;}
-    else{
-    engine.world.gravity.y = 0.6;}
+    if (mode == 'fly') {
+      engine.world.gravity.y = -0.1;
+    } else {
+      engine.world.gravity.y = 0.6;
+    }
 
     world = engine.world;
     ctx = canvas.drawingContext;
@@ -86,8 +89,8 @@ export const handler = ({
     grounds.push(new Boundary(0, height / 2, borderThickness, height));
     grounds.push(new Boundary(width, height / 2, borderThickness, height));
 
-    if (mode=='gravity' || mode=='spawn'){
-    grounds.push(new Boundary(width / 2, height, width, borderThickness));
+    if (mode == 'gravity' || mode == 'spawn') {
+      grounds.push(new Boundary(width / 2, height, width, borderThickness));
     }
     World.add(world, grounds);
     Matter.Resolver._restingThresh = 0.1;
@@ -104,7 +107,7 @@ export const handler = ({
     let mConstraint = MouseConstraint.create(engine, options);
     World.add(world, mConstraint);
     sketch.noStroke()
-      // run the engine
+    // run the engine
     Engine.run(engine);
   };
 
@@ -113,28 +116,32 @@ export const handler = ({
     sketch.fill(backgroundColor2);
     sketch.push()
     sketch.translate(0, bgHeight)
-    sketch.rotate(rotateBg)
-    sketch.rect(0, 0, width, height *30)
+    if (backgroundRotation) {
+      sketch.rotate(rotateBg)
+    }
+    sketch.rect(0, 0, width, height * 30)
     sketch.pop()
 
-    // small text
-    sketch.fill(color1)
-    sketch.textFont('Object Sans')
-    sketch.textSize(sizer/30)
-    sketch.textAlign(sketch.CENTER)
-    sketch.text('mechanic.design', width/2, Math.min(height/4, firstLine-fontSize*2))
+    if (textShow) {
+      // small text
+      sketch.fill(color1)
+      sketch.textFont('Object Sans')
+      sketch.textSize(sizer / 30)
+      sketch.textAlign(sketch.CENTER)
+      sketch.text('mechanic.design', width / 2, Math.min(height / 4, firstLine - fontSize * 2))
 
-    // tagline
-    sketch.fill(color1)
-    sketch.textFont('Object Sans Heavy')
-    sketch.textSize(fontSize)
-    sketch.textAlign(sketch.CENTER)
-    lines.map((el, i) => sketch.text(el, width/2, firstLine + i * fontSize));
+      // tagline
+      sketch.fill(color1)
+      sketch.textFont('Object Sans Heavy')
+      sketch.textSize(fontSize)
+      sketch.textAlign(sketch.CENTER)
+      lines.map((el, i) => sketch.text(el, width / 2, firstLine + i * fontSize));
+    }
 
 
     if (boxes.length + circles.length < numOfShapes) {
 
-      switch(mode){
+      switch (mode) {
         case 'gravity':
           drawShapes(sketch.random(width), -height / 4, 20);
           break;
@@ -142,14 +149,13 @@ export const handler = ({
           drawShapes(sketch.random(width), height / 2, 10);
           break;
         case 'fly':
-          drawShapes(sketch.random(width), height*1.5, 10);
+          drawShapes(sketch.random(width), height * 1.5, 10);
           break;
         case 'bottomless':
           drawShapes(sketch.random(width), -height, 10);
           break;
       }
-    }
-    else{
+    } else {
       Engine.update(engine);
       for (let box of boxes) {
         box.show();
@@ -159,28 +165,28 @@ export const handler = ({
       }
     }
 
-    if (sketch.millis()/1000 < seconds) {
+    if (sketch.millis() / 1000 < seconds) {
       mechanic.frame();
     } else {
       mechanic.done();
     }
   };
 
-  function drawShapes(x, y, timer=20) {
+  function drawShapes(x, y, timer = 20) {
     if (sketch.frameCount % timer === 0) {
       let size = sizeArray(sizes)
       let offX = sketch.random(-width / 6, width / 6);
       let offY = sketch.random(height / 4);
 
-      switch(shapes){
+      switch (shapes) {
         case 'mechanic':
-          boxes.push(new Box(x + offX, y + offY, size, size/2.5));
+          boxes.push(new Box(x + offX, y + offY, size, size / 2.5));
           break;
         case 'circles':
           circles.push(new Circle(x + offX, y + offY, size / 2));
           break;
         case 'both':
-          boxes.push(new Box(x + offX, y + offY, size, size/2.5));
+          boxes.push(new Box(x + offX, y + offY, size, size / 2.5));
           circles.push(new Circle(x + offX, y + offY, size / 2));
           break;
       }
@@ -194,8 +200,8 @@ export const handler = ({
     }
   }
 
-  function sizeArray(name){
-    switch(name){
+  function sizeArray(name) {
+    switch (name) {
       case 'smallSizes':
         return sketch.random(smallSizes);
         break;
@@ -203,15 +209,15 @@ export const handler = ({
         return sketch.random(mediumSizes);
         break;
       case 'bigSizes':
-          return sketch.max(sketch.random(bigSizes), sketch.random(bigSizes));
-          break;
+        return sketch.max(sketch.random(bigSizes), sketch.random(bigSizes));
+        break;
       case 'mixSizes':
         return sketch.random(mixSizes);
         break;
     }
   }
 
-  function mapRange (value, a, b, c, d) {
+  function mapRange(value, a, b, c, d) {
     // first map value from (a..b) to (0..1)
     value = (value - a) / (b - a);
     // then map it from (0..1) to (c..d) and return it
@@ -229,7 +235,7 @@ export const handler = ({
       };
       this.body = Bodies.circle(x, y, r, options);
       this.r = r;
-      this.angle = Math.random()*360;
+      this.angle = Math.random() * 360;
       World.add(world, this.body);
     }
     show() {
@@ -362,7 +368,7 @@ export const inputs = {
   },
   sizes: {
     type: "text",
-    default: 'bigSizes',
+    default: 'mixSizes',
     options: ['smallSizes', 'mediumSizes', 'bigSizes', 'mixSizes']
   },
   mode: {
@@ -381,12 +387,12 @@ export const inputs = {
   backgroundColor1: {
     type: "color",
     model: "hex",
-    default: "#E94825",
+    default: "#002EBB",
   },
   backgroundColor2: {
     type: "color",
     model: "hex",
-    default: "#F09C84",
+    default: "#E94225",
   },
   color1: {
     type: "color",
@@ -398,6 +404,14 @@ export const inputs = {
     model: "hex",
     default: "#002EBB",
   },
+  backgroundRotation: {
+    type: "boolean",
+    default: false,
+  },
+  textShow: {
+    type: "boolean",
+    default: true,
+  }
 };
 
 export const presets = {

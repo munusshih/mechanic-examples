@@ -4,9 +4,7 @@ import './styles.css';
 export const handler = ({ inputs, mechanic }) => {
   const { width, height,
     randomRatio, grid, textSize, randomColor,
-    textOne, textTwo, textThree, textFour, title, image} = inputs;
-
-console.log(randomColor.textColor)
+    textOne, textTwo, textThree, textFour, title, image, filterOpacity, titleSizeAdjust} = inputs;
 
   const textColor = randomColor.show? getRandomColor() : randomColor.textColor;
   const titleColor = randomColor.show? getRandomColor() : randomColor.titleColor;
@@ -39,11 +37,19 @@ console.log(randomColor.textColor)
 
   const fullHeight = (height-borderRatio*2)
   const textSizeRatio = (textSize - (canvasRatio-0.5)*2) * width / 1080 / Math.min(canvasRatio, 1)
-  const titleSize = (textSize- title.length*0.8) * 10 * width / 1080 / Math.min(canvasRatio, 1)
+  const titleSize = (textSize- title.length*0.8 + titleSizeAdjust) * 10 * width / 1080 / Math.min(canvasRatio, 1)
   const titleAngle = (Math.round(Math.random()) * 2 - 1) * Math.random() * (60 / canvasRatio)
 
   let columnClass = grid? (brightnessByColor(backgroundColor)>127? 'column darkGrid' : 'column lightGrid') : 'column'
   let GridColor = brightnessByColor(backgroundColor)>127? '#000' : '#fff'
+
+  const bigTextStyle = {
+    color: titleColor,
+    fontSize: textSizeRatio*1.5,
+    fontFamily: "Object Sans",
+    whiteSpace: 'pre-wrap',
+    overflowWrap: "anywhere",
+  };
 
   const textStyle = {
     color: textColor,
@@ -53,7 +59,6 @@ console.log(randomColor.textColor)
     overflowWrap: "anywhere",
   };
 
-  // borrowed from https://gist.github.com/w3core/e3d9b5b6d69a3ba8671cc84714cca8a4
   function brightnessByColor (color) {
     var color = "" + color, isHEX = color.indexOf("#") == 0, isRGB = color.indexOf("rgb") == 0;
     if (isHEX) {
@@ -108,16 +113,19 @@ console.log(randomColor.textColor)
 
       <defs>
         {/* mask to crop the image into a half circle */}
-        <clipPath id="image-mask">
-        <rect fill="none" width={cropWidth} height={height} x={Math.max(0, width/2-cropWidth)}/>
-        </clipPath>
+        <mask id="image-mask">
+        <rect fill="#fff" width={cropWidth} height={height} x={Math.max(0, width/2-cropWidth)}/>
+        </mask>
       </defs>
 
         {/* the image that will be cropped */}
       <image width="100%" height="100%" transform={`translate(${cropX-Math.max(0, width/2-cropWidth)} 0) `}
           preserveAspectRatio="xMidYMid slice"
-          href={href}
-          clipPath="url(#image-mask)"/>
+          href={href? href : "https://images.unsplash.com/photo-1568214697537-ace27ffd6cf3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1888&q=80"}
+          mask="url(#image-mask)"/>
+
+      <rect fill="#000" width={cropWidth} height={height} x={cropX}
+            style={{mixBlendMode: "multiply"}} opacity={filterOpacity/100}/>
 
 
       {/* lines */}
@@ -129,18 +137,18 @@ console.log(randomColor.textColor)
       }
 
       <foreignObject width={oneWidth} height={fullHeight} x={borderRatio} y={borderRatio}>
-        <div className={columnClass} style={textStyle}>
-          <div className="top">
-              <p>{textOne.toUpperCase()}</p>
+        <div className={columnClass} >
+          <div className="top" style={bigTextStyle}>
+              <p>{textOne}</p>
               {canvasRatio >= 0.5?<></> :
-              <><br /><p>{textFour.toUpperCase()}</p></>}
+              <><br /><p>{textFour}</p></>}
           </div>
 
-          <div className="bottom">
-              <p>{textTwo.toUpperCase()}</p>
+          <div className="bottom" style={textStyle}>
+              <p>{textTwo}</p>
               {canvasRatio >= 0.5?<></> :
               <><br />
-            <p>{textThree.toUpperCase()}</p></>}
+            <p>{textThree}</p></>}
           </div>
         </div>
       </foreignObject>
@@ -149,20 +157,20 @@ console.log(randomColor.textColor)
         <div className={columnClass} style={textStyle}>
           {canvasRatio >= 0.75?
           <></> :
-          <div className="top">
-            <p>{textFour.toUpperCase()}</p>
+          <div className="top" style={bigTextStyle}>
+            <p>{textFour}</p>
           </div>}
 
-          <div className="bottom">
-              <p>{textThree.toUpperCase()}</p>
+          <div className="bottom" style={textStyle}>
+              <p>{textThree}</p>
           </div>
         </div>
       </foreignObject>
 
       <foreignObject width={threeWidth} height={fullHeight} x={chooseX[2]+borderRatio*0.5} y={borderRatio}>
-        <div className={columnClass} style={textStyle}>
-          <div className="top">
-              <p>{textFour.toUpperCase()}</p>
+        <div className={columnClass}>
+          <div className="top" style={bigTextStyle}>
+              <p>{textFour}</p>
           </div>
         </div>
       </foreignObject>
@@ -252,7 +260,7 @@ export const inputs = {
   },
   randomColor : {
     type: "groupToggle",
-    default: true,
+    default: false,
     label: "Random Color",
     inputs: {
       backgroundColor: {
@@ -263,7 +271,7 @@ export const inputs = {
       textColor: {
         type: "color",
         model: "hex",
-        default: "#E94825",
+        default: "#ffffff",
       },
       titleColor: {
         type: "color",
@@ -276,9 +284,25 @@ export const inputs = {
     type: "image",
     multiple: false,
   },
+  filterOpacity: {
+    type: "number",
+    default: 20,
+    min: 0,
+    max: 100,
+    step: 1,
+    slider: true,
+  },
   textSize: {
     type: "number",
     default: 20,
+  },
+  titleSizeAdjust: {
+    type: "number",
+    slider: true,
+    default: 0,
+    min: -5,
+    max: 15,
+    step: 1,
   },
   title : {
     type: "text",
@@ -319,9 +343,13 @@ export const presets = {
     width: 812,
     height: 1148,
   },
-  "FB Banner": {
+  "Banner": {
     width: 1640,
     height: 624,
+  },
+  "Ticket": {
+    width: 394,
+    height: 1126,
   },
 };
 

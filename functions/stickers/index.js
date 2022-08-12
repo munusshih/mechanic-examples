@@ -89,7 +89,8 @@ export const handler = ({ inputs, mechanic }) => {
         {/* the image that will be cropped */}
       <image width="100%" height="100%" transform={`translate(${-width/2} ${-height/2})`}
           preserveAspectRatio="xMidYMid slice"
-          href={href} mask="url(#image-mask)"/>
+          href={href? href: "https://images.unsplash.com/photo-1648254795567-0112e5d29a97?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"}
+          mask="url(#image-mask)"/>
 
         {/* the filter half circle with adjustable opacity */}
       <path d={`M ${-circleRadius} 0
@@ -144,7 +145,7 @@ export const inputs = {
   },
   tagline: {
     type: "text",
-    default: "mechanic this sticker",
+    default: "*mechanic* this sticker!",
   },
   description: {
     type: "text",
@@ -175,7 +176,7 @@ export const inputs = {
   },
   filterOpacity: {
     type: "number",
-    default: 100,
+    default: 0,
     min: 0,
     max: 100,
     step: 1,
@@ -189,4 +190,5 @@ export const inputs = {
 
 export const settings = {
   engine: require("@mechanic-design/engine-react"),
+  showMultipleExports: true,
 };

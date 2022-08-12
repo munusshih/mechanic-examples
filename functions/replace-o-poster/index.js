@@ -12,7 +12,7 @@ export const handler = ({
     color1,
     color2,
     backgroundColor,
-    turns
+    turns,
   } =
   inputs;
 
@@ -24,13 +24,13 @@ export const handler = ({
     num: parseInt(Math.random() * 30),
     spaceX: (10 + Math.random() * -20) * 10,
     spaceY: (10 + Math.random() * -20) * 30,
-    size: width/4 + Math.random()*width/4*3,
-    rotate: Math.random()*Math.PI,
-    strokeWeight :  2 + Math.random()*5
+    size: width / 4 + Math.random() * width / 4 * 3,
+    rotate: Math.random() * Math.PI,
+    strokeWeight: 2 + Math.random() * 5
   }
   let angle = 0;
   let holder = []; // Output
-  const maxText = parseInt(mapRange(height/width, 1.3, 0.5, 12, 20))
+  const maxText = parseInt(mapRange(height / width, 1.3, 0.5, 12, 20))
 
   for (var i = 0, j = raw.length - 1; i <= j; i++) { // Iterate all but last (last can never be glued to non-existing next)
     let curr = raw[i]; // This piece
@@ -45,7 +45,8 @@ export const handler = ({
   const lines = [...holder]
   const maxLength = Math.max(...(lines.map(el => el.length)));
   const maxLine = Math.floor((height / (textSizeAjust + 90) * width / 850))
-  const fontSize = (textSizeAjust + 150 - Math.max(0, (lines.length - maxLine)) * 7 - Math.max(0, maxLength) * 5) * width / 850
+  const canvasRatio = height/width
+  const fontSize = (textSizeAjust + 140 - Math.max(0, (lines.length - maxLine)) * 7 - Math.max(0, maxLength) * 5 + mapRange(canvasRatio, 1, 0.5, -10, 10)) * width / 850
   const lineHeight = fontSize
   const circleSize = fontSize * 0.8
   const firstLine = (border) / 100 * width + lineHeight;
@@ -100,10 +101,10 @@ export const handler = ({
             // 				circles
             sketch.fill(color1);
             sketch.noStroke()
-            sketch.arc(x + circleSize / 2 + 1.5 * (width+height) / 1700, y - circleSize / 2 + 2 * (width+height) / 1700,
+            sketch.arc(x + circleSize / 2 + 1.5 * (width + height) / 1700, y - circleSize / 2 + 2 * (width + height) / 1700,
               circleSize, circleSize, 0 + sketch.frameCount / 30 + i * 10, sketch.PI + sketch.frameCount / 30 + i * 10);
             sketch.fill(color2);
-            sketch.arc(x + circleSize / 2 + 1.5 * (width+height) / 1700, y - circleSize / 2 + 2 * (width+height) / 1700,
+            sketch.arc(x + circleSize / 2 + 1.5 * (width + height) / 1700, y - circleSize / 2 + 2 * (width + height) / 1700,
               circleSize, circleSize, sketch.PI + sketch.frameCount / 30 + i * 10, sketch.PI * 2 + sketch.frameCount / 30 + i * 10);
           }
 
@@ -120,7 +121,7 @@ export const handler = ({
       sketch.textSize(lineHeight / 2.5);
       sketch.noStroke()
       sketch.fill(color1)
-      sketch.text("MECHANIC.DESIGN", border / 100 * width, height - lineHeight / 2-border);
+      sketch.text("MECHANIC.DESIGN", border / 100 * width, height - lineHeight / 2 - border);
 
     }
 
@@ -187,39 +188,39 @@ export const handler = ({
 
   function circleShape(x, y, size, rotate, num, strokeWeight) {
     for (let i = 0; i < num; i++) {
-    sketch.push()
-    sketch.noFill()
-    sketch.strokeWeight(strokeWeight)
-    sketch.translate(x, y)
-    sketch.translate(0, i *size*1.1)
-    sketch.rotate(rotate)
-    sketch.stroke(sketch.hue(backgroundColor), sketch.saturation(backgroundColor) - 30, 100)
-    sketch.arc(0, 0, size, size, 0, sketch.PI, sketch.PIE)
-    sketch.arc(0, 0, size, size, sketch.PI, sketch.PI*2)
-    sketch.pop()
-  }
+      sketch.push()
+      sketch.noFill()
+      sketch.strokeWeight(strokeWeight)
+      sketch.translate(x, y)
+      sketch.translate(0, i * size * 1.1)
+      sketch.rotate(rotate)
+      sketch.stroke(sketch.hue(backgroundColor), sketch.saturation(backgroundColor) - 30, 100)
+      sketch.arc(0, 0, size, size, 0, sketch.PI, sketch.PIE)
+      sketch.arc(0, 0, size, size, sketch.PI, sketch.PI * 2)
+      sketch.pop()
+    }
   }
 
   function exportShape(x, y, num, strokeWeight) {
     sketch.push()
     sketch.noFill()
-    sketch.stroke(sketch.hue(backgroundColor)+180, 20, 100)
+    sketch.stroke(sketch.hue(backgroundColor) + 180, 20, 100)
     sketch.strokeWeight(4)
     sketch.translate(x, y)
-    sketch.rotate(Math.PI/2)
-    sketch.rect(0, 0, 1000/3.5, 90, 1000/2);
-    sketch.rect(1000/3.5 + 125, 0, 1000/3.5 + 25, 90, 1000/2+50);
-    sketch.rect(1000/3.5 + 1000/3.5 + 220, 0, 1000/3.5 - 45, 90, 1000/2);
+    sketch.rotate(Math.PI / 2)
+    sketch.rect(0, 0, 1000 / 3.5, 90, 1000 / 2);
+    sketch.rect(1000 / 3.5 + 125, 0, 1000 / 3.5 + 25, 90, 1000 / 2 + 50);
+    sketch.rect(1000 / 3.5 + 1000 / 3.5 + 220, 0, 1000 / 3.5 - 45, 90, 1000 / 2);
 
     sketch.noStroke()
-    sketch.fill(sketch.hue(backgroundColor)+180, 20, 100)
+    sketch.fill(sketch.hue(backgroundColor) + 180, 20, 100)
     sketch.textFont('PPObjectSans-Regular')
-    sketch.textSize(1000/25)
+    sketch.textSize(1000 / 25)
     sketch.text('New file           >           Mechanic          >          Export', -80, 15)
     sketch.pop()
   }
 
-  function mapRange (value, a, b, c, d) {
+  function mapRange(value, a, b, c, d) {
     // first map value from (a..b) to (0..1)
     value = (value - a) / (b - a);
     // then map it from (0..1) to (c..d) and return it
