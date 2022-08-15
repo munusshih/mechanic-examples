@@ -49,6 +49,7 @@ export const handler = ({ inputs, mechanic }) => {
     fontFamily: "Object Sans",
     whiteSpace: 'pre-wrap',
     overflowWrap: "anywhere",
+    hyphens: "auto"
   };
 
   const textStyle = {
@@ -57,6 +58,7 @@ export const handler = ({ inputs, mechanic }) => {
     fontFamily: "Object Sans",
     whiteSpace: 'pre-wrap',
     overflowWrap: "anywhere",
+    hyphens: "auto"
   };
 
   function brightnessByColor (color) {
@@ -322,7 +324,7 @@ export const inputs = {
   },
   textFour : {
     type: "text",
-    default: "MUNUS@MECHANIC.ORG +1 876.9834.9823"
+    default: "MUNUS@MECHANIC.DESIGN"
   },
   grid: {
     type: "boolean",

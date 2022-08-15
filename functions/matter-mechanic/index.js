@@ -107,8 +107,6 @@ export const handler = ({
     let mConstraint = MouseConstraint.create(engine, options);
     World.add(world, mConstraint);
     sketch.noStroke()
-    // run the engine
-    Engine.run(engine);
   };
 
   sketch.draw = () => {

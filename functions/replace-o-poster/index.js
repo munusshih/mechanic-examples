@@ -1,3 +1,5 @@
+import "./styles.css";
+
 export const handler = ({
   inputs,
   mechanic,
@@ -26,12 +28,13 @@ export const handler = ({
     spaceY: (10 + Math.random() * -20) * 30,
     size: width / 4 + Math.random() * width / 4 * 3,
     rotate: Math.random() * Math.PI,
-    strokeWeight: 2 + Math.random() * 5
+    strokeWeight: 2 + Math.random() * 5 * width / 850
   }
   let angle = 0;
   let holder = []; // Output
-  const maxText = parseInt(mapRange(height / width, 1.3, 0.5, 12, 20))
 
+  const canvasRatio = width/height
+  const maxText = parseInt(mapRange(1/canvasRatio, 1.3, 0.5, 12, 20))
   for (var i = 0, j = raw.length - 1; i <= j; i++) { // Iterate all but last (last can never be glued to non-existing next)
     let curr = raw[i]; // This piece
     let next = raw[i + 1]
@@ -44,9 +47,7 @@ export const handler = ({
   }
   const lines = [...holder]
   const maxLength = Math.max(...(lines.map(el => el.length)));
-  const maxLine = Math.floor((height / (textSizeAjust + 90) * width / 850))
-  const canvasRatio = height/width
-  const fontSize = (textSizeAjust + 140 - Math.max(0, (lines.length - maxLine)) * 7 - Math.max(0, maxLength) * 5 + mapRange(canvasRatio, 1, 0.5, -10, 10)) * width / 850
+  const fontSize = (textSizeAjust + 140 - Math.max(0, maxLength) * 5 + mapRange(canvasRatio, 1, 0.5, -20, 10)) * width / 850
   const lineHeight = fontSize
   const circleSize = fontSize * 0.8
   const firstLine = (border) / 100 * width + lineHeight;
@@ -60,6 +61,13 @@ export const handler = ({
   sketch.draw = () => {
     sketch.background(backgroundColor);
 
+    sketch.textFont('Futura');
+    sketch.textSize(lineHeight / 2.5);
+    sketch.noStroke()
+    sketch.fill(color1)
+    sketch.text("MECHANIC.DESIGN", border / 100 * width, height - lineHeight / 2 - border);
+
+    sketch.push()
     // background Image
     switch (backgroundImage) {
       case 'files':
@@ -77,6 +85,7 @@ export const handler = ({
       default:
         break;
     }
+    sketch.pop()
 
     sketch.fill('white');
 
@@ -117,12 +126,6 @@ export const handler = ({
         sketch.text(e.toUpperCase(), border / 100 * width, firstLine + i * lineHeight);
       }
 
-      sketch.textFont('IBM Plex Mono Light');
-      sketch.textSize(lineHeight / 2.5);
-      sketch.noStroke()
-      sketch.fill(color1)
-      sketch.text("MECHANIC.DESIGN", border / 100 * width, height - lineHeight / 2 - border);
-
     }
 
     if (angle < turns * 2 * Math.PI) {
@@ -137,6 +140,7 @@ export const handler = ({
     sketch.push()
     sketch.translate(x, y)
     sketch.scale(0.8)
+    sketch.scale(width / 850)
     for (let i = 0; i < num; i++) {
       sketch.push()
       sketch.translate(i * bgImage.spaceX, i * bgImage.spaceY)
@@ -207,6 +211,7 @@ export const handler = ({
     sketch.stroke(sketch.hue(backgroundColor) + 180, 20, 100)
     sketch.strokeWeight(4)
     sketch.translate(x, y)
+    sketch.scale(width / 850)
     sketch.rotate(Math.PI / 2)
     sketch.rect(0, 0, 1000 / 3.5, 90, 1000 / 2);
     sketch.rect(1000 / 3.5 + 125, 0, 1000 / 3.5 + 25, 90, 1000 / 2 + 50);
@@ -216,7 +221,11 @@ export const handler = ({
     sketch.fill(sketch.hue(backgroundColor) + 180, 20, 100)
     sketch.textFont('PPObjectSans-Regular')
     sketch.textSize(1000 / 25)
-    sketch.text('New file           >           Mechanic          >          Export', -80, 15)
+    sketch.text('New file', -80, 15)
+    sketch.text('>', 190, 15)
+    sketch.text('Mechanic', 315, 15)
+    sketch.text('>', 610, 15)
+    sketch.text('Export', 730, 15)
     sketch.pop()
   }
 
