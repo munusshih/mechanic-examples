@@ -158,7 +158,7 @@ The logic is to read the input text as an array of individual words by using `.s
 
 For instance, with an array like `['this','cat', 'is', happy]`, the algorithm will possibly glue it as `['this cat', 'is happy']`.
 
-# string manipulation
+### string manipulation
 In the p5 code, we will do another if statement to determine whether each string element of this newly glued array includes any "O" or not. If it does then we will split it into an array and take out the "O". For instance, a string "Ontology" with many Os will become an array like this ["O", "NT", "O", "L", "O", "GY"]. 
 
 ```js
