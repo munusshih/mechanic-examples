@@ -1,7 +1,7 @@
 {
   "name": "sticker-project",
   "version": "1.0.0",
-  "hoepage": "https://munusshih.github.io",
+  "hoepage": "https://munusshih.github.io/mechanic-examples",
   "scripts": {
     "dev": "mechanic dev",
     "build": "mechanic build",
