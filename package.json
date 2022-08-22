@@ -1,11 +1,14 @@
 {
   "name": "sticker-project",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "hoepage": "https://munusshih.github.io",
   "scripts": {
     "dev": "mechanic dev",
     "build": "mechanic build",
     "serve": "mechanic serve",
-    "new": "mechanic new function"
+    "new": "mechanic new function",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "devDependencies": {
     "@mechanic-design/cli": "^2.0.0-beta.8",
@@ -14,6 +17,8 @@
   "dependencies": {
     "@mechanic-design/engine-p5": "^2.0.0-beta.8",
     "@mechanic-design/engine-react": "^2.0.0-beta.8",
-    "matter-js": "^0.18.0"
+    "gh-pages": "^4.0.0",
+    "matter-js": "^0.18.0",
+    "save-dev": "^0.0.1-security"
   }
 }
