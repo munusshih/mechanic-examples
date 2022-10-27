@@ -1,14 +1,14 @@
 {
   "name": "sticker-project",
   "version": "1.0.0",
-  "hoepage": "https://munusshih.github.io/mechanic-examples",
+  "homepage": "http://munusshih.github.io/mechanic-examples",
   "scripts": {
     "dev": "mechanic dev",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d build",
     "build": "mechanic build",
     "serve": "mechanic serve",
-    "new": "mechanic new function",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "new": "mechanic new function"
   },
   "devDependencies": {
     "@mechanic-design/cli": "^2.0.0-beta.8",
